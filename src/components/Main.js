@@ -1,6 +1,6 @@
 import React from "react";
-import Map from "./Map";
-import Locations from "./Locations";
+// import Map from "./Map";
+// import Locations from "./Locations";
 import { Button, Container, Form } from "react-bootstrap";
 import axios from "axios";
 
