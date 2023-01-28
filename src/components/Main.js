@@ -22,7 +22,7 @@ class Main extends React.Component {
     }
 
     displaySearch = async (e) => {
-        e.preventDefault();
+        try{e.preventDefault();
 
         let response = await axios.get(`https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.city}&format=json`)
 
@@ -31,7 +31,10 @@ class Main extends React.Component {
             displayInfo: true,
             cityData: response.data[0]
         }
-        )
+        )}
+        catch(error){
+            
+        }
     }
 
     render() {
