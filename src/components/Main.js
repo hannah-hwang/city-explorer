@@ -22,7 +22,8 @@ class Main extends React.Component {
     }
 
     displaySearch = async (e) => {
-        try{e.preventDefault();
+        // try{
+        e.preventDefault();
 
         let response = await axios.get(`https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.city}&format=json`)
 
@@ -31,10 +32,11 @@ class Main extends React.Component {
             displayInfo: true,
             cityData: response.data[0]
         }
-        )}
-        catch(error){
-            
-        }
+        )
+        // }
+        // catch(error){
+
+        // }
     }
 
     render() {
@@ -48,15 +50,15 @@ class Main extends React.Component {
                         </Form.Group>
                         <Button onClick={this.displaySearch} className="cityButton">Explore!</Button>
                     </Form>
-                    </Container>
+                </Container>
 
-                    {this.state.displayInfo &&
-                        <>
-                            <h2>{this.state.cityData.display_name}</h2>
-                            <p>Latitude:{this.state.cityData.lat} Longitude:{this.state.cityData.lon}</p>
-                            <Map lat={this.state.cityData.lat} lon={this.state.cityData.lon} />
-                        </>
-                    }
+                {this.state.displayInfo &&
+                    <>
+                        <h2>{this.state.cityData.display_name}</h2>
+                        <p>Latitude:{this.state.cityData.lat} Longitude:{this.state.cityData.lon}</p>
+                        <Map lat={this.state.cityData.lat} lon={this.state.cityData.lon} />
+                    </>
+                }
             </main>
         )
     }
