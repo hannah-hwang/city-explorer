@@ -1,6 +1,6 @@
 import React from "react";
 import Map from "./Map";
-import { Button, Container, Form } from "react-bootstrap";
+import { Button, Container, Form, Modal } from "react-bootstrap";
 import axios from "axios";
 import "../App.css";
 
@@ -10,7 +10,8 @@ class Main extends React.Component {
         this.state = {
             displayInfo: false,
             city: '',
-            cityData: {}
+            cityData: {},
+            errorModal: false
         }
     }
 
@@ -22,21 +23,28 @@ class Main extends React.Component {
     }
 
     displaySearch = async (e) => {
-        // try{
-        e.preventDefault();
+        try {
+            e.preventDefault();
 
-        let response = await axios.get(`https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.city}&format=json`)
+            let response = await axios.get(`https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.city}&format=json`)
 
 
-        this.setState({
-            displayInfo: true,
-            cityData: response.data[0]
+            this.setState({
+                displayInfo: true,
+                cityData: response.data[0]
+            })
         }
-        )
-        // }
-        // catch(error){
+        catch (error) {
+            this.setState({
+                errorModal: true
+            })
+        }
 
-        // }
+    }
+    closeErrorModal = () => {
+        this.setState({
+            errorModal: false
+        });
     }
 
     render() {
@@ -59,7 +67,20 @@ class Main extends React.Component {
                         <Map lat={this.state.cityData.lat} lon={this.state.cityData.lon} />
                     </>
                 }
+
+                <Modal
+                    show={this.state.errorModal}
+                    onHide={this.closeErrorModal}
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Error</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>☹︎You've entered an invalid response. Please try again.☹︎</p>
+                    </Modal.Body>
+                </Modal>
             </main>
+
         )
     }
 }
