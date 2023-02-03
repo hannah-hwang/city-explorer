@@ -1,5 +1,6 @@
 import React from "react";
 import Map from "./Map";
+import Weather from "./Weather";
 import { Button, Container, Form, Modal } from "react-bootstrap";
 import axios from "axios";
 import "../App.css";
@@ -11,6 +12,9 @@ class Main extends React.Component {
             displayInfo: false,
             city: '',
             cityData: {},
+            weatherInfo: [],
+            weatherLat: {},
+            weatherLon: {},
             errorModal: false
         }
     }
@@ -26,13 +30,14 @@ class Main extends React.Component {
         try {
             e.preventDefault();
 
-            let response = await axios.get(`https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.city}&format=json`)
+            let response = await axios.get(`https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.city}&format=json`);
 
 
             this.setState({
                 displayInfo: true,
                 cityData: response.data[0]
             })
+            this.displayWeather();
         }
         catch (error) {
             this.setState({
@@ -41,6 +46,19 @@ class Main extends React.Component {
         }
 
     }
+
+    displayWeather = async () => {
+        let serverResponse = await axios.get(`${process.env.REACT_APP_SERVER}/weather?searchQuery=${this.state.city}`);
+        console.log(serverResponse);
+        this.setState({
+            displayInfo: true,
+            weatherInfo: serverResponse.data,
+            weatherLat: serverResponse.data[0].lat,
+            weatherLon: serverResponse.data[0].lon
+        })
+        console.log(this.state.weatherInfo)
+    }
+
     closeErrorModal = () => {
         this.setState({
             errorModal: false
@@ -65,6 +83,7 @@ class Main extends React.Component {
                         <h2>{this.state.cityData.display_name}</h2>
                         <p>Latitude:{this.state.cityData.lat} Longitude:{this.state.cityData.lon}</p>
                         <Map lat={this.state.cityData.lat} lon={this.state.cityData.lon} />
+                        <Weather weatherInfo={this.state.weatherInfo} />
                     </>
                 }
 
