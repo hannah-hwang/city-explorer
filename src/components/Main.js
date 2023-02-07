@@ -1,6 +1,7 @@
 import React from "react";
 import Map from "./Map";
 import Weather from "./Weather";
+import Movies from "./Movies";
 import { Button, Container, Form, Modal } from "react-bootstrap";
 import axios from "axios";
 import "../App.css";
@@ -10,12 +11,13 @@ class Main extends React.Component {
         super(props);
         this.state = {
             displayInfo: false,
+            errorModal: false,
             city: '',
             cityData: {},
             weatherInfo: [],
             weatherLat: {},
             weatherLon: {},
-            errorModal: false
+            movieInfo: []
         }
     }
 
@@ -35,7 +37,9 @@ class Main extends React.Component {
 
             this.setState({
                 displayInfo: true,
-                cityData: response.data[0]
+                cityData: response.data[0],
+                weatherLat: response.data[0].lat,
+                weatherLon: response.data[0].lon
             })
             this.displayWeather();
         }
@@ -48,15 +52,21 @@ class Main extends React.Component {
     }
 
     displayWeather = async () => {
-        let serverResponse = await axios.get(`${process.env.REACT_APP_SERVER}/weather?searchQuery=${this.state.city}`);
+        let serverResponse = await axios.get(`${process.env.REACT_APP_SERVER}/weather?lat=${this.state.weatherLat}&lon=${this.state.weatherLon}`);
         console.log(serverResponse);
         this.setState({
             displayInfo: true,
             weatherInfo: serverResponse.data,
-            weatherLat: serverResponse.data[0].lat,
-            weatherLon: serverResponse.data[0].lon
         })
         console.log(this.state.weatherInfo)
+    }
+
+    displayMovies = async () => {
+        let movieResponse = await axios.get(`${process.env.REACT_APP_SERVER}/movies?query=${this.state.city}`);
+        this.setState({
+            displayInfo: true,
+            movieInfo: movieResponse.data
+        })
     }
 
     closeErrorModal = () => {
@@ -84,6 +94,7 @@ class Main extends React.Component {
                         <p>Latitude:{this.state.cityData.lat} Longitude:{this.state.cityData.lon}</p>
                         <Map lat={this.state.cityData.lat} lon={this.state.cityData.lon} />
                         <Weather weatherInfo={this.state.weatherInfo} />
+                        <Movies movieInfo={this.state.movieInfo} />
                     </>
                 }
 

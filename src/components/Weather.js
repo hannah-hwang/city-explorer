@@ -4,20 +4,22 @@ class Weather extends React.Component {
     render() {
         console.log(this.props.weatherInfo);
         return (
-
-
-            this.props.weatherInfo.map((item, idx) => (
-
-                <div key={idx}>
-                    <p>{item.date}</p>
-                    <p>{item.description}</p>
-                </div>
-
-            ))
-
-
+            <>
+                <ul>
+                    {this.props.weatherInfo.map((item, idx) => {
+                        return (
+                            <li key={idx}>
+                                <p>{item.date}</p>
+                                <p>{item.description}</p>
+                            </li>
+                        )
+                    })}
+                </ul>
+            </>
         )
     }
 }
 
 export default Weather;
+
+
