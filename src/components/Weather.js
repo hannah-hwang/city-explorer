@@ -8,6 +8,7 @@ class Weather extends React.Component {
                 <ul>
                     {this.props.weatherInfo.map((item, idx) => {
                         return (
+
                             <li key={idx}>
                                 <p>{item.date}</p>
                                 <p>{item.description}</p>
@@ -18,7 +19,8 @@ class Weather extends React.Component {
             </>
         )
     }
-}
+};
+
 
 export default Weather;
 
