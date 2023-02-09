@@ -15,33 +15,64 @@ class Main extends React.Component {
             city: '',
             cityData: {},
             weatherInfo: [],
-            weatherLat: {},
-            weatherLon: {},
+            weatherLat: '',
+            weatherLon: '',
             movieInfo: []
         }
-    }
+    };
 
     handleSearchInput = e => {
         let cityName = e.target.value;
         this.setState({
             city: cityName
         })
-    }
+    };
+
+    displayWeather = async (lat, lon) => {
+        try {
+            let serverResponse = await axios.get(`${process.env.REACT_APP_SERVER}/weather?lat=${lat}&lon=${lon}`);
+            this.setState({
+                weatherInfo: serverResponse.data,
+            })
+        }
+
+        catch (error) {
+            this.setState({
+                errorModal: true
+            })
+        }
+    };
+
+    displayMovies = async () => {
+        try {
+            let movieResponse = await axios.get(`${process.env.REACT_APP_SERVER}/movies?city=${this.state.city}`);
+            this.setState({
+                movieInfo: movieResponse.data
+            })
+        }
+        catch (error) {
+            this.setState({
+                errorModal: true
+            })
+        }
+    };
 
     displaySearch = async (e) => {
         try {
             e.preventDefault();
 
             let response = await axios.get(`https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.city}&format=json`);
-
-
+            console.log(response.data);
+            let lat = response.data[0].lat;
+            let lon = response.data[0].lon;
             this.setState({
                 displayInfo: true,
                 cityData: response.data[0],
-                weatherLat: response.data[0].lat,
-                weatherLon: response.data[0].lon
+                weatherLat: lat,
+                weatherLon: lon
             })
-            this.displayWeather();
+            this.displayWeather(lat, lon);
+            this.displayMovies();
         }
         catch (error) {
             this.setState({
@@ -49,31 +80,14 @@ class Main extends React.Component {
             })
         }
 
-    }
+    };
 
-    displayWeather = async () => {
-        let serverResponse = await axios.get(`${process.env.REACT_APP_SERVER}/weather?lat=${this.state.weatherLat}&lon=${this.state.weatherLon}`);
-        console.log(serverResponse);
-        this.setState({
-            displayInfo: true,
-            weatherInfo: serverResponse.data,
-        })
-        console.log(this.state.weatherInfo)
-    }
-
-    displayMovies = async () => {
-        let movieResponse = await axios.get(`${process.env.REACT_APP_SERVER}/movies?query=${this.state.city}`);
-        this.setState({
-            displayInfo: true,
-            movieInfo: movieResponse.data
-        })
-    }
 
     closeErrorModal = () => {
         this.setState({
             errorModal: false
         });
-    }
+    };
 
     render() {
         return (
@@ -94,7 +108,11 @@ class Main extends React.Component {
                         <p>Latitude:{this.state.cityData.lat} Longitude:{this.state.cityData.lon}</p>
                         <Map lat={this.state.cityData.lat} lon={this.state.cityData.lon} />
                         <Weather weatherInfo={this.state.weatherInfo} />
-                        <Movies movieInfo={this.state.movieInfo} />
+                        <div>
+                            {this.state.movieInfo.length > 0 &&
+                                <Movies movieInfo={this.state.movieInfo} />
+                            }
+                        </div>
                     </>
                 }
 
@@ -113,6 +131,6 @@ class Main extends React.Component {
 
         )
     }
-}
+};
 
 export default Main;
