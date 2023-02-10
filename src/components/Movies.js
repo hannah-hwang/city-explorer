@@ -1,22 +1,25 @@
 import React from "react";
+import Movie from "./Movie";
 
 class Movies extends React.Component {
     render() {
         console.log(this.props.movieInfo);
         return (
             <>
+                <h2>Movies:</h2>
                 <ul>
                     {this.props.movieInfo.map((item, idx) => {
                         return (
-                            <li key={idx}>
-                                <p>{item.title}</p>
-                                <p>{item.overview}</p>
-                                <p>{item.average_votes}</p>
-                                <p>{item.total_votes}</p>
-                                <p>{item.image_url}</p>
-                                <p>{item.popularity}</p>
-                                <p>{item.released_on}</p>
-                            </li>
+                            <Movie
+                                key={idx}
+                                title={item.title}
+                                overview={item.overview}
+                                average_votes={item.average_votes}
+                                total_votes={item.total_votes}
+                                image={item.image_url}
+                                popularity={item.popularity}
+                                released_on={item.released_on}
+                            />
                         )
                     })}
                 </ul>
